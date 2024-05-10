@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'e:\Work\PYQT\ReportHandle\src\MainWindow.ui'
+# Form implementation generated from reading ui file 'd:\work\PyQt\ReportHandle\src\MainWindow.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1297, 929)
+        MainWindow.resize(1387, 938)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.fileList = QtWidgets.QListView(self.centralwidget)
@@ -67,7 +67,7 @@ class Ui_MainWindow(object):
         self.selModeBox.setObjectName("selModeBox")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1297, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1387, 23))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
 
