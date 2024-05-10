@@ -188,11 +188,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # 在标签上显示图片
         label = QLabel(self)
         label.setScaledContents(True)
-        # 按屏幕大小缩放标签
-        # print(self.screen)
-        # p.scaled(self.boxsize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         p = render_pdf_page(page, x=self.size.x, y=self.size.y)
         pixmap = QPixmap(p)
+         # 按控件大小缩放标签
         scaled_pixmap = pixmap.scaled(
             self.contentWidget.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation
         )
