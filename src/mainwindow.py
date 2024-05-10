@@ -1,7 +1,7 @@
 import sys
 import os
 import json
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QDir
 from PyQt5.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -29,7 +29,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
         # 界面初始大小
-        # self.resize(self.screen.width(), self.screen.height() - 75)
+        # self.resize(self.screen.width(), self.screen.height())
         self.initParmas()
         self.initUi()
         self.initSlots()
@@ -51,16 +51,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.fileList.model = QFileSystemModel()
         self.fileList.model.setRootPath(self.path)
         # 为控件添加模式。
+        # 设置过滤器，仅显示 PDF 文件
+        self.fileList.model.setNameFilters(["*.pdf"])
+        self.fileList.model.setNameFilterDisables(False)  # 禁用未匹配名称过滤器的文件的显示
         self.fileList.setModel(self.fileList.model)
         self.fileList.setRootIndex(
             self.fileList.model.index(self.path)
         )  # 只显示设置的那个文件路径。
         self.read_book(self.cur_fpath)
+        self.set_stuinfo(self.cur_fname)
         # self.set_page()
 
     def initParmas(self):
         self.socre_records = {}
-        self.path = "C:/Users/EchoBai/Desktop/操作系统实验报告/02"
+        self.path = "C:/Users/EchoBai/Desktop/操作系统实验报告/00"
         self.filename = os.path.join(self.path, "records.json")
         self.pdflist = Handle().findlist(self.path)
         self.page = 0
@@ -68,8 +72,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.cur_fname = self.pdflist[self.page]
         self.cur_fpath = self.path + "/"
         self.cur_fpath += self.cur_fname
-
         self.index = 0
+        print(self.pdflist)
 
     def initSlots(self):
         self.fileList.doubleClicked.connect(self.open_file)  # 双击文件打开
@@ -79,6 +83,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.nextDocBtn.clicked.connect(self.next_doc)
         self.selModeBox.currentIndexChanged.connect(self.selectionChanged)
 
+    def get_pdf_files(self):
+        pdf_files = []
+
+        # 递归遍历文件系统模型以收集 PDF 文件
+        def recurse(index):
+            # 文件的数量
+            file_count = self.fileList.model.rowCount(index)
+            for i in range(file_count):
+                child_index = self.fileList.model.index(i, 0, index)
+                if self.fileList.model.isDir(child_index):
+                    recurse(child_index)
+                else:
+                    file_path = self.fileList.model.filePath(child_index)
+                    if file_path.lower().endswith('.pdf'):
+                        pdf_files.append(file_path)
+
+        # 从已知的根索引开始递归
+        recurse(self.fileList.model.index(self.path))
+        return pdf_files
+
     def update_params(self, fname):
         self.cur_fname = fname
         self.cur_fpath = self.path + "/"
@@ -86,12 +110,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.page = 0
 
     def next_doc(self):
-        self.update_params(self.get_next_file())
+        next_fname = self.get_next_file()
+        self.update_params(next_fname)
         # self.read_book(self.cur_fpath)
+        self.set_stuinfo(next_fname)
         self.set_page()
 
     def pre_doc(self):
-        self.update_params(self.get_pre_file())
+        pre_fname = self.get_pre_file()
+        self.update_params(pre_fname)
+        self.set_stuinfo(pre_fname)
         # self.read_book(self.cur_fpath)
         self.set_page()
 
@@ -108,14 +136,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.cur_fname = fname
         self.index = self.pdflist.index(fname)
         filename = self.fileList.model.fileName(Qmodelidx)
+        self.set_stuinfo(filename)
+        # self.read_book(fpath)
+        self.page = 0
+        self.set_page()
+
+    def set_stuinfo(self, filename):
         fileinfo = Handle().splittitle(filename)
         self.score.setText(str(0))
         self.stuName.setText(fileinfo["name"])
         self.stuID.setText(fileinfo["stuid"])
         self.labName.setText("实验" + fileinfo["labinfo"])
-        # self.read_book(fpath)
-        self.set_page()
-        print(fileinfo)
 
     def get_score(self) -> int:
         return self.score.text()
@@ -130,11 +161,37 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         return self.labName.text()
 
     def get_next_file(self) -> str:
-        self.index += 1
+        if self.index == len(self.pdflist) - 1:
+            TeachingTip.create(
+                target=self,
+                icon=InfoBarIcon.INFORMATION,
+                title="提示",
+                content="恭喜你，已经全部批改完毕！！！",
+                isClosable=True,
+                tailPosition=TeachingTipTailPosition.BOTTOM,
+                duration=2000,
+                parent=self,
+            )
+            self.index = len(self.pdflist) - 1
+        elif self.index < len(self.pdflist) - 1: 
+            self.index += 1
         return self.pdflist[self.index]
 
     def get_pre_file(self) -> str:
-        self.index -= 1
+        if self.index == 0:
+            TeachingTip.create(
+                target=self,
+                icon=InfoBarIcon.INFORMATION,
+                title="提示",
+                content="当前已经是第一篇了",
+                isClosable=True,
+                tailPosition=TeachingTipTailPosition.BOTTOM,
+                duration=2000,
+                parent=self,
+            )
+            self.index = 0
+        elif self.index > 0: 
+            self.index -= 1
         return self.pdflist[self.index]
 
     def save_score(self):
@@ -242,6 +299,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # book = self.get_read_book()
         # 加载页面
         doc = fitz.open(self.cur_fpath)
+
+        self.total_page = doc.page_count
+
         page = doc.load_page(self.page)
         # 获取当前 Widget
         tab = self.contentWidget
