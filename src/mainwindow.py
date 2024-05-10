@@ -55,18 +55,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.fileList.setRootIndex(
             self.fileList.model.index(self.path)
         )  # 只显示设置的那个文件路径。
+        self.read_book(self.cur_fpath)
 
     def initParmas(self):
         self.socre_records = {}
-        self.page = 0
-        self.total_page = 0
-        self.cur_fpath = ""
-        self.cur_fname = ""
-        self.index = 0
         self.path = "D:/Desktop/交大操作系统实验/学生报告/02"
         self.filename = os.path.join(self.path, "records.json")
         self.pdflist = Handle().findlist(self.path)
-        print(self.pdflist)
+        self.page = 0
+        self.total_page = 0
+        self.cur_fname = self.pdflist[self.page]
+        self.cur_fpath = self.path + "/"
+        self.cur_fpath += self.cur_fname
+
+        self.index = 0
 
     def initSlots(self):
         self.fileList.doubleClicked.connect(self.open_file)  # 双击文件打开
@@ -76,14 +78,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.nextDocBtn.clicked.connect(self.next_doc)
         self.selModeBox.currentIndexChanged.connect(self.selectionChanged)
 
+    def update_params(self, fname):
+        self.cur_fname = fname
+        self.cur_fpath = self.path + "/"
+        self.cur_fpath += self.cur_fname
+        self.page = 0
+
     def next_doc(self):
-        target = self.path + "/"
-        target += self.cur_fname
-        print(target)
-        print(self.get_next_file())
+        self.update_params(self.get_next_file())
+        self.read_book(self.cur_fpath)
 
     def pre_doc(self):
-        pass
+        self.update_params(self.get_pre_file())
+        self.read_book(self.cur_fpath)
 
     def selectionChanged(self, index):
         selected_option = self.selModeBox.itemText(index)
@@ -104,7 +111,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.stuID.setText(fileinfo["stuid"])
         self.labName.setText("实验" + fileinfo["labinfo"])
         self.read_book(fpath)
-        # self.set_page()
         print(fileinfo)
 
     def get_score(self) -> int:
