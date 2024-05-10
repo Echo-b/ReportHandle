@@ -8,9 +8,10 @@ from PyQt5.QtWidgets import (
     QFileSystemModel,
     QWidget,
     QVBoxLayout,
-    QDesktopWidget,
     QLabel,
 )
+from qfluentwidgets import MessageBox, TeachingTip, TeachingTipTailPosition, InfoBarIcon
+
 from PyQt5.QtGui import QImage, QPixmap
 from Ui_MainWindow import Ui_MainWindow
 from handle import Handle
@@ -26,7 +27,6 @@ except ImportError:
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
-        self.screen = QDesktopWidget().screenGeometry()
         self.setupUi(self)
         # 界面初始大小
         # self.resize(self.screen.width(), self.screen.height() - 75)
@@ -61,20 +61,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.page = 0
         self.total_page = 0
         self.cur_fpath = ""
+        self.cur_fname = ""
+        self.index = 0
         self.path = "D:/Desktop/交大操作系统实验/学生报告/02"
         self.filename = os.path.join(self.path, "records.json")
         self.pdflist = Handle().findlist(self.path)
+        print(self.pdflist)
 
     def initSlots(self):
         self.fileList.doubleClicked.connect(self.open_file)  # 双击文件打开
         self.okBtn.clicked.connect(self.save_score)
         self.exportBtn.clicked.connect(self.save)
-        self.preDocBtn.clicked.connect(self.next_doc)
-        self.nextDocBtn.clicked.connect(self.pre_doc)
+        self.preDocBtn.clicked.connect(self.pre_doc)
+        self.nextDocBtn.clicked.connect(self.next_doc)
         self.selModeBox.currentIndexChanged.connect(self.selectionChanged)
 
     def next_doc(self):
-        pass
+        target = self.path + "/"
+        target += self.cur_fname
+        print(target)
+        print(self.get_next_file())
 
     def pre_doc(self):
         pass
@@ -86,15 +92,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def open_file(self, Qmodelidx):
         print(self.fileList.model.filePath(Qmodelidx))  # 输出文件的地址。
         print(self.fileList.model.fileName(Qmodelidx))  # 输出文件名
-        fname = self.fileList.model.filePath(Qmodelidx)
-        self.cur_fpath = fname
+        fpath = self.fileList.model.filePath(Qmodelidx)
+        fname = self.fileList.model.fileName(Qmodelidx)
+        self.cur_fpath = fpath
+        self.cur_fname = fname
+        self.index = self.pdflist.index(fname)
         filename = self.fileList.model.fileName(Qmodelidx)
         fileinfo = Handle().splittitle(filename)
         self.score.setText(str(0))
         self.stuName.setText(fileinfo["name"])
         self.stuID.setText(fileinfo["stuid"])
         self.labName.setText("实验" + fileinfo["labinfo"])
-        self.read_book(fname)
+        self.read_book(fpath)
         # self.set_page()
         print(fileinfo)
 
@@ -109,6 +118,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def get_labinfo(self) -> str:
         return self.labName.text()
+
+    def get_next_file(self) -> str:
+        self.index += 1
+        return self.pdflist[self.index]
+
+    def get_pre_file(self) -> str:
+        self.index -= 1
+        return self.pdflist[self.index]
 
     def save_score(self):
         stuname = self.get_stuname()
@@ -185,12 +202,37 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def set_current_page(self, right):
         # book = self.get_read_book()
         # 之后统一在 book 中
-        if right and self.page < self.total_page:
+        if right and self.page < (self.total_page - 1):
             # if right:
             self.page += 1
 
+        elif right and self.page == (self.total_page - 1):
+            TeachingTip.create(
+                target=self,
+                icon=InfoBarIcon.INFORMATION,
+                title="提示",
+                content="已经是最后一页啦！",
+                isClosable=True,
+                tailPosition=TeachingTipTailPosition.BOTTOM,
+                duration=2000,
+                parent=self,
+            )
+            self.page = self.total_page - 1
+
         elif not right and self.page:
             self.page -= 1
+        elif not right and self.page == 0:
+            TeachingTip.create(
+                target=self,
+                icon=InfoBarIcon.INFORMATION,
+                title="提示",
+                content="已经是第一页啦！",
+                isClosable=True,
+                tailPosition=TeachingTipTailPosition.BOTTOM,
+                duration=2000,
+                parent=self,
+            )
+            self.page = 0
 
     def switch_page(self, right=True):
         self.set_current_page(right)
