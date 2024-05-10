@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1297</width>
+    <height>929</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QListView" name="fileList">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>0</y>
+      <width>256</width>
+      <height>881</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="PrimaryPushButton" name="okBtn">
+    <property name="geometry">
+     <rect>
+      <x>1160</x>
+      <y>610</y>
+      <width>91</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>确认评分</string>
+    </property>
+   </widget>
+   <widget class="LineEdit" name="score">
+    <property name="geometry">
+     <rect>
+      <x>1140</x>
+      <y>520</y>
+      <width>128</width>
+      <height>33</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="StrongBodyLabel" name="StrongBodyLabel">
+    <property name="geometry">
+     <rect>
+      <x>1090</x>
+      <y>530</y>
+      <width>41</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>评分</string>
+    </property>
+   </widget>
+   <widget class="LineEdit" name="stuID">
+    <property name="geometry">
+     <rect>
+      <x>1140</x>
+      <y>440</y>
+      <width>128</width>
+      <height>33</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="StrongBodyLabel" name="StrongBodyLabel_2">
+    <property name="geometry">
+     <rect>
+      <x>1090</x>
+      <y>440</y>
+      <width>41</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>学号</string>
+    </property>
+   </widget>
+   <widget class="LineEdit" name="stuName">
+    <property name="geometry">
+     <rect>
+      <x>1140</x>
+      <y>350</y>
+      <width>128</width>
+      <height>33</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="StrongBodyLabel" name="StrongBodyLabel_3">
+    <property name="geometry">
+     <rect>
+      <x>1090</x>
+      <y>360</y>
+      <width>41</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>姓名</string>
+    </property>
+   </widget>
+   <widget class="StrongBodyLabel" name="StrongBodyLabel_4">
+    <property name="geometry">
+     <rect>
+      <x>1090</x>
+      <y>280</y>
+      <width>41</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>实验</string>
+    </property>
+   </widget>
+   <widget class="LineEdit" name="labName">
+    <property name="geometry">
+     <rect>
+      <x>1140</x>
+      <y>270</y>
+      <width>128</width>
+      <height>33</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QWidget" name="contentWidget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>0</y>
+      <width>811</width>
+      <height>881</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="PrimaryPushButton" name="exportBtn">
+    <property name="geometry">
+     <rect>
+      <x>1160</x>
+      <y>670</y>
+      <width>91</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>导出评分</string>
+    </property>
+   </widget>
+   <widget class="PrimaryPushButton" name="preDocBtn">
+    <property name="geometry">
+     <rect>
+      <x>1160</x>
+      <y>730</y>
+      <width>91</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>上一篇</string>
+    </property>
+   </widget>
+   <widget class="PrimaryPushButton" name="nextDocBtn">
+    <property name="geometry">
+     <rect>
+      <x>1160</x>
+      <y>790</y>
+      <width>91</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>下一篇</string>
+    </property>
+   </widget>
+   <widget class="TextEdit" name="Comments">
+    <property name="geometry">
+     <rect>
+      <x>1090</x>
+      <y>50</y>
+      <width>201</width>
+      <height>201</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="ComboBox" name="selModeBox">
+    <property name="geometry">
+     <rect>
+      <x>1090</x>
+      <y>10</y>
+      <width>201</width>
+      <height>32</height>
+     </rect>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1297</width>
+     <height>23</height>
+    </rect>
+   </property>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ComboBox</class>
+   <extends>QPushButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>PushButton</class>
+   <extends>QPushButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>PrimaryPushButton</class>
+   <extends>PushButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>StrongBodyLabel</class>
+   <extends>QLabel</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>LineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>TextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
