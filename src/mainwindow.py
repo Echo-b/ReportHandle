@@ -56,10 +56,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.fileList.model.index(self.path)
         )  # 只显示设置的那个文件路径。
         self.read_book(self.cur_fpath)
+        # self.set_page()
 
     def initParmas(self):
         self.socre_records = {}
-        self.path = "D:/Desktop/交大操作系统实验/学生报告/02"
+        self.path = "C:/Users/EchoBai/Desktop/操作系统实验报告/02"
         self.filename = os.path.join(self.path, "records.json")
         self.pdflist = Handle().findlist(self.path)
         self.page = 0
@@ -86,11 +87,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def next_doc(self):
         self.update_params(self.get_next_file())
-        self.read_book(self.cur_fpath)
+        # self.read_book(self.cur_fpath)
+        self.set_page()
 
     def pre_doc(self):
         self.update_params(self.get_pre_file())
-        self.read_book(self.cur_fpath)
+        # self.read_book(self.cur_fpath)
+        self.set_page()
 
     def selectionChanged(self, index):
         selected_option = self.selModeBox.itemText(index)
@@ -110,7 +113,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.stuName.setText(fileinfo["name"])
         self.stuID.setText(fileinfo["stuid"])
         self.labName.setText("实验" + fileinfo["labinfo"])
-        self.read_book(fpath)
+        # self.read_book(fpath)
+        self.set_page()
         print(fileinfo)
 
     def get_score(self) -> int:
@@ -152,10 +156,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.total_page = doc.page_count
         vbox = self.book_area(doc.load_page(self.page))
         doc.close()
-        layout = self.contentWidget.layout()
-        if layout:
-            self.remove_layout(layout)
-        self.contentWidget.update()
         self.book_add_tab(vbox)
 
     def remove_layout(self, layout):
@@ -168,14 +168,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             layout.deleteLater()
 
     def book_add_tab(self, vbox):
-        # tab = QWidget()
-        # self.contentWidget.update()
+        if self.contentWidget.layout() is not None:
+            self.contentWidget.layout().deleteLater()
         self.contentWidget.setLayout(vbox)
-        # self.contentWidget.update()
-
-        # tab 为页面，title 为标签名称
-        # self.contentWidget.addTab(tab, title)
-        # self.contentWidget.setCurrentIndex(self.contentWidget.count() - 1)
+        self.contentWidget.update()
 
     def book_area(self, page):
         label = self.page_pixmap(page)
