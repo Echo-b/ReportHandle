@@ -14,7 +14,7 @@ from qfluentwidgets import MessageBox, TeachingTip, TeachingTipTailPosition, Inf
 
 from PyQt5.QtGui import QImage, QPixmap
 from Ui_MainWindow import Ui_MainWindow
-from handle import Handle
+from filehandle import Handle
 from Area import MyArea
 from utils import Size, Point
 
