@@ -1,7 +1,7 @@
 import sys
 import os
 import json
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QEvent, QRect, QTimer
 from PyQt5.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -10,6 +10,10 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
     QDesktopWidget,
     QLabel,
+    QCheckBox,
+    QStyledItemDelegate,
+    QStyle,
+    QStyleOptionButton,
 )
 from PyQt5.QtGui import QImage, QPixmap
 from Ui_MainWindow import Ui_MainWindow
@@ -22,6 +26,94 @@ try:
 except ImportError:
     print("请安装 fitz")
 
+# class CheckBoxDelegate(QStyledItemDelegate):
+#     def __init__(self, parent=None):
+#         super().__init__(parent)
+#         self.doubleClickTimer = QTimer()
+#         self.doubleClickTimer.setSingleShot(True)
+#         self.doubleClickTimer.timeout.connect(self.handleSingleClick)
+
+#     def paint(self, painter, option, index):
+#         super().paint(painter, option, index)
+#         if index.column() == 0:
+#             checked = index.data(Qt.CheckStateRole) == Qt.Checked
+#             checkbox_style_option = QStyleOptionButton()
+#             checkbox_style_option.state = QStyle.State_Enabled | (
+#                 QStyle.State_On if checked else QStyle.State_Off
+#             )
+#             checkbox_style_option.rect = self.checkboxRect(option)
+#             QApplication.style().drawControl(
+#                 QStyle.CE_CheckBox, checkbox_style_option, painter
+#             )
+
+#     def editorEvent(self, event, model, option, index):
+#         if event.type() == QEvent.MouseButtonDblClick:
+#             self.doubleClickTimer.stop()
+#             self.handleDoubleClick(event, model, index)
+#         elif event.type() == QEvent.MouseButtonPress:
+#             self.doubleClickTimer.start(QApplication.doubleClickInterval())
+#         return super().editorEvent(event, model, option, index)
+
+#     def handleDoubleClick(self, event, model, index):
+#         if index.column() == 0:
+#             state = model.data(index, Qt.CheckStateRole)
+#             model.setData(
+#                 index,
+#                 Qt.Unchecked if state == Qt.Checked else Qt.Checked,
+#                 Qt.CheckStateRole,
+#             )
+
+#     def handleSingleClick(self):
+#         self.doubleClickTimer.stop()
+
+#     def editorEvent(self, event, model, option, index):
+#         # 在用户点击时更改复选框状态
+#         if (
+#             event.type() == QEvent.MouseButtonRelease
+#             and event.button() == Qt.LeftButton
+#         ):
+#             if self.checkboxRect(option).contains(event.pos()):
+#                 checked = model.data(index, Qt.CheckStateRole) == Qt.Checked
+#                 model.setData(
+#                     index, Qt.Unchecked if checked else Qt.Checked, Qt.CheckStateRole
+#                 )
+#                 return True
+#         return super().editorEvent(event, model, option, index)
+
+#     def checkboxRect(self, option):
+#         # 计算复选框的位置
+#         checkbox_size = QApplication.style().pixelMetric(QStyle.PM_IndicatorWidth)
+#         checkbox_rect = QRect(
+#             option.rect.x() + option.rect.width() - checkbox_size - 2,
+#             option.rect.y() + (option.rect.height() - checkbox_size) // 2,
+#             checkbox_size,
+#             checkbox_size,
+#         )
+#         return checkbox_rect
+
+
+# class CheckableFileSystemModel(QFileSystemModel):
+#     def __init__(self, *args, **kwargs):
+#         super(CheckableFileSystemModel, self).__init__(*args, **kwargs)
+#         self.checks = {}
+
+#     def data(self, index, role=Qt.DisplayRole):
+#         if role == Qt.CheckStateRole and index.column() == 0:
+#             return self.checks.get(index, Qt.Unchecked)
+#         return super(CheckableFileSystemModel, self).data(index, role)
+
+#     def setData(self, index, value, role=Qt.CheckStateRole):
+#         if role == Qt.CheckStateRole and index.column() == 0:
+#             self.checks[index] = value
+#             self.dataChanged.emit(index, index, [role])
+#             return True
+#         return super(CheckableFileSystemModel, self).setData(index, value, role)
+
+#     def flags(self, index):
+#         return (
+#             super(CheckableFileSystemModel, self).flags(index) | Qt.ItemIsUserCheckable
+#         )
+
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -30,9 +122,32 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         # 界面初始大小
         # self.resize(self.screen.width(), self.screen.height() - 75)
-        self.initParmas()
+        self.socre_records = {}
+        self.path = "D:/Desktop/交大操作系统实验/学生报告/02"
+        self.filename = os.path.join(self.path, "records.json")
+        self.fileList.model = QFileSystemModel()
+        self.fileList.model.setRootPath(self.path)
+        self.page = 0
+        self.total_page = 0
+        self.cur_fpath = ""
+
+        # self.model = CheckableFileSystemModel()
+        # self.model.setRootPath(self.path)
+
+        # self.fileList.setModel(self.model)
+        # self.fileList.setItemDelegate(CheckBoxDelegate(self.fileList))
+        # self.fileList.setRootIndex(self.model.index(self.path))
+
+        # 为控件添加模式。
+        self.fileList.setModel(self.fileList.model)
+        self.fileList.setRootIndex(
+            self.fileList.model.index(self.path)
+        )  # 只显示设置的那个文件路径。
+        self.fileList.doubleClicked.connect(self.set_labinfo)  # 双击文件打开
+        self.okBtn.clicked.connect(self.save_score)
+        self.exportBtn.clicked.connect(self.save)
         self.initUi()
-        self.initSlots()
+        self.selModeBox.currentIndexChanged.connect(self.selectionChanged)
 
     def initUi(self):
         # 属性点 1
@@ -48,42 +163,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # self.selModeBox.setText(None)
         self.Comments.setPlaceholderText("请输入评语")
 
-        self.fileList.model = QFileSystemModel()
-        self.fileList.model.setRootPath(self.path)
-        # 为控件添加模式。
-        self.fileList.setModel(self.fileList.model)
-        self.fileList.setRootIndex(
-            self.fileList.model.index(self.path)
-        )  # 只显示设置的那个文件路径。
-
-    def initParmas(self):
-        self.socre_records = {}
-        self.page = 0
-        self.total_page = 0
-        self.cur_fpath = ""
-        self.path = "D:/Desktop/交大操作系统实验/学生报告/02"
-        self.filename = os.path.join(self.path, "records.json")
-        self.pdflist = Handle().findlist(self.path)
-
-    def initSlots(self):
-        self.fileList.doubleClicked.connect(self.open_file)  # 双击文件打开
-        self.okBtn.clicked.connect(self.save_score)
-        self.exportBtn.clicked.connect(self.save)
-        self.preDocBtn.clicked.connect(self.next_doc)
-        self.nextDocBtn.clicked.connect(self.pre_doc)
-        self.selModeBox.currentIndexChanged.connect(self.selectionChanged)
-
-    def next_doc(self):
-        pass
-
-    def pre_doc(self):
-        pass
-
     def selectionChanged(self, index):
         selected_option = self.selModeBox.itemText(index)
         self.Comments.setText("Selected: " + selected_option)
 
-    def open_file(self, Qmodelidx):
+    def set_labinfo(self, Qmodelidx):
         print(self.fileList.model.filePath(Qmodelidx))  # 输出文件的地址。
         print(self.fileList.model.fileName(Qmodelidx))  # 输出文件名
         fname = self.fileList.model.filePath(Qmodelidx)
