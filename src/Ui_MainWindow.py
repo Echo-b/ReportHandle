@@ -62,9 +62,9 @@ class Ui_MainWindow(object):
         self.Comments = TextEdit(self.centralwidget)
         self.Comments.setGeometry(QtCore.QRect(1090, 50, 201, 201))
         self.Comments.setObjectName("Comments")
-        self.selModeBox = ComboBox(self.centralwidget)
-        self.selModeBox.setGeometry(QtCore.QRect(1090, 10, 201, 32))
-        self.selModeBox.setObjectName("selModeBox")
+        self.selCommentsTemplate = PrimaryPushButton(self.centralwidget)
+        self.selCommentsTemplate.setGeometry(QtCore.QRect(1140, 10, 111, 32))
+        self.selCommentsTemplate.setObjectName("selCommentsTemplate")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1297, 23))
@@ -91,6 +91,7 @@ class Ui_MainWindow(object):
         self.exportBtn.setText(_translate("MainWindow", "导出评分"))
         self.preDocBtn.setText(_translate("MainWindow", "上一篇"))
         self.nextDocBtn.setText(_translate("MainWindow", "下一篇"))
+        self.selCommentsTemplate.setText(_translate("MainWindow", "选择评论模板"))
         self.menu.setTitle(_translate("MainWindow", "文件"))
         self.openFileAction.setText(_translate("MainWindow", "打开文件"))
-from qfluentwidgets import ComboBox, LineEdit, PrimaryPushButton, StrongBodyLabel, TextEdit
+from qfluentwidgets import LineEdit, PrimaryPushButton, StrongBodyLabel, TextEdit

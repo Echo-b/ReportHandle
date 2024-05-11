@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>550</width>
+    <height>323</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QWidget" name="widget_2" native="true">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>0</y>
+     <width>531</width>
+     <height>261</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QWidget" name="widget_3" native="true">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="CaptionLabel" name="CaptionLabel_2">
+         <property name="text">
+          <string>命名规范性</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="CheckBox" name="docBasic">
+         <property name="text">
+          <string>一般</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="CheckBox" name="docGood">
+         <property name="text">
+          <string>好</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="CheckBox" name="docGreat">
+         <property name="text">
+          <string>较好</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="CheckBox" name="docExcellent">
+         <property name="text">
+          <string>优秀</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QWidget" name="widget_4" native="true">
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="CaptionLabel" name="CaptionLabel_3">
+         <property name="text">
+          <string>要求完成度</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="CheckBox" name="compBasic">
+         <property name="text">
+          <string>一般</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="CheckBox" name="compGood">
+         <property name="text">
+          <string>好</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="CheckBox" name="compGreat">
+         <property name="text">
+          <string>较好</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="CheckBox" name="compExcellent">
+         <property name="text">
+          <string>优秀</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QWidget" name="widget_5" native="true">
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="CaptionLabel" name="CaptionLabel_4">
+         <property name="text">
+          <string>文档可读性</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="CheckBox" name="readBasic">
+         <property name="text">
+          <string>一般</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="CheckBox" name="readGood">
+         <property name="text">
+          <string>好</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="CheckBox" name="readGreat">
+         <property name="text">
+          <string>较好</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="CheckBox" name="readExcellent">
+         <property name="text">
+          <string>优秀</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QWidget" name="widget_6" native="true">
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="CaptionLabel" name="CaptionLabel_5">
+         <property name="text">
+          <string>参考价值</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="CheckBox" name="refBasic">
+         <property name="text">
+          <string>一般</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="CheckBox" name="refGood">
+         <property name="text">
+          <string>好</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="CheckBox" name="refGreat">
+         <property name="text">
+          <string>较好</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="CheckBox" name="refExcellent">
+         <property name="text">
+          <string>优秀</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="PrimaryPushButton" name="clsOptionsBtn">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>270</y>
+     <width>81</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>清空选择</string>
+   </property>
+  </widget>
+  <widget class="PrimaryPushButton" name="ensureOptionsBtn">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>270</y>
+     <width>81</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>确认选择</string>
+   </property>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>PushButton</class>
+   <extends>QPushButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>PrimaryPushButton</class>
+   <extends>PushButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>CaptionLabel</class>
+   <extends>QLabel</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

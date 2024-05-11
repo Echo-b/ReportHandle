@@ -1,12 +1,12 @@
 import sys
 import os
 import json
-from PyQt5.QtCore import Qt, QDir
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import (
     QApplication,
     QMainWindow,
     QFileSystemModel,
-    QWidget,
+    QDialog,
     QVBoxLayout,
     QLabel,
     QFileDialog
@@ -18,14 +18,15 @@ from Ui_MainWindow import Ui_MainWindow
 from filehandle import Handle
 from Area import MyArea
 from utils import Size, Point
+from comments import CommentTemplate
 
 try:
     import fitz
 except ImportError:
     print("请安装 fitz")
 
-
 class MainWindow(QMainWindow, Ui_MainWindow):
+    get_select_options_signal = pyqtSignal(list)
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -34,6 +35,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowIcon(QIcon('./image/avatar.jpg'))
         self.setWindowTitle("简易报告批改器")
         self.initSlots()
+        self.ctw = CommentTemplate()
+        self.get_select_options_signal.connect(self.ctw.confirm_select)
 
     def initUi(self):
         # 属性点 1
@@ -43,12 +46,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # 需要改进，只允许打开一本书
         # 列表
         self.size = Size(2.6, 2.6)
-        sel_action = [0, 1, 2, 3]
-        for sa in sel_action:
-            self.selModeBox.addItem(str(sel_action[sa]))
+        # sel_action = [0, 1, 2, 3]
+        # for sa in sel_action:
+        #     self.selModeBox.addItem(str(sel_action[sa]))
         # self.selModeBox.setText(None)
         self.Comments.setPlaceholderText("请输入评语")
-
         self.fileList.model = QFileSystemModel()
         self.fileList.model.setRootPath(self.path)
         # 为控件添加模式。
@@ -67,7 +69,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # 打开文件夹选择对话框
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        folder = QFileDialog.getExistingDirectory(self, "Select Folder", options=options)
+        folder = QFileDialog.getExistingDirectory(self, "请选择文件夹路径", options=options)
         if folder:
             self.path = folder
             self.initParmas()
@@ -86,6 +88,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def initParmas(self):
         self.socre_records = {}
+        self.options = []
         # self.path = "C:/Users/EchoBai/Desktop/操作系统实验报告/00"
         self.filename = os.path.join(self.path, "records.json")
         self.pdflist = Handle().findlist(self.path)
@@ -102,28 +105,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.exportBtn.clicked.connect(self.save)
         self.preDocBtn.clicked.connect(self.pre_doc)
         self.nextDocBtn.clicked.connect(self.next_doc)
-        self.selModeBox.currentIndexChanged.connect(self.selectionChanged)
+        self.selCommentsTemplate.clicked.connect(self.select_comments_template)
         self.openFileAction.triggered.connect(self.get_sel_fpath)
 
-    def get_pdf_files(self):
-        pdf_files = []
+    def select_comments_template(self):
+        self.show_comments_windos()
 
-        # 递归遍历文件系统模型以收集 PDF 文件
-        def recurse(index):
-            # 文件的数量
-            file_count = self.fileList.model.rowCount(index)
-            for i in range(file_count):
-                child_index = self.fileList.model.index(i, 0, index)
-                if self.fileList.model.isDir(child_index):
-                    recurse(child_index)
-                else:
-                    file_path = self.fileList.model.filePath(child_index)
-                    if file_path.lower().endswith('.pdf'):
-                        pdf_files.append(file_path)
+    def show_comments_windos(self):
+        self.ctw.show()
+        self.ctw.get_data_signal.connect(self.get_data)
 
-        # 从已知的根索引开始递归
-        recurse(self.fileList.model.index(self.path))
-        return pdf_files
+    def get_data(self, data: list):
+        self.options = data
+        print(self.options)
+        if self.options is not None:
+            self.Comments.clear()
+            for op in self.options:
+                self.Comments.append(op)
+        self.ctw.close()
 
     def update_params(self, fname):
         self.cur_fname = fname
@@ -144,10 +143,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.set_stuinfo(pre_fname)
         # self.read_book(self.cur_fpath)
         self.set_page()
-
-    def selectionChanged(self, index):
-        selected_option = self.selModeBox.itemText(index)
-        self.Comments.setText("Selected: " + selected_option)
 
     def open_file(self, Qmodelidx):
         print(self.fileList.model.filePath(Qmodelidx))  # 输出文件的地址。
@@ -221,12 +216,34 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         stuid = self.get_stuid()
         labinfo = self.get_labinfo()
         score = self.get_score()
-        self.socre_records[stuid] = tuple((stuname, score, labinfo))
+        comments = self.Comments.toPlainText()
+        self.socre_records[stuid] = tuple((stuname, score, labinfo, comments))
+        TeachingTip.create(
+                target=self,
+                icon=InfoBarIcon.SUCCESS,
+                title="提示",
+                content="评分成功",
+                isClosable=True,
+                tailPosition=TeachingTipTailPosition.BOTTOM,
+                duration=2000,
+                parent=self,
+            )
         print(self.socre_records)
+        self.next_doc()
 
     def save(self):
         with open(self.filename, "w", encoding="utf-8") as f:
             json.dump(self.socre_records, f, ensure_ascii=False, indent=4)
+        TeachingTip.create(
+                target=self,
+                icon=InfoBarIcon.SUCCESS,
+                title="提示",
+                content="导出文件成功",
+                isClosable=True,
+                tailPosition=TeachingTipTailPosition.BOTTOM,
+                duration=2000,
+                parent=self,
+            )
 
     def read_book(self, fname):
         # self.close()
