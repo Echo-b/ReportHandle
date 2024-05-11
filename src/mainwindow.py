@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QLabel,
+    QFileDialog
 )
 from qfluentwidgets import MessageBox, TeachingTip, TeachingTipTailPosition, InfoBarIcon
 
@@ -30,8 +31,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         # 界面初始大小
         # self.resize(self.screen.width(), self.screen.height())
-        self.initParmas()
-        self.initUi()
         self.initSlots()
 
     def initUi(self):
@@ -58,13 +57,34 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.fileList.setRootIndex(
             self.fileList.model.index(self.path)
         )  # 只显示设置的那个文件路径。
+        # self.set_page()
         self.read_book(self.cur_fpath)
         self.set_stuinfo(self.cur_fname)
-        # self.set_page()
+
+    def get_sel_fpath(self):
+        # 打开文件夹选择对话框
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        folder = QFileDialog.getExistingDirectory(self, "Select Folder", options=options)
+        if folder:
+            self.path = folder
+            self.initParmas()
+            self.initUi()
+        else:
+            TeachingTip.create(
+                target=self,
+                icon=InfoBarIcon.ERROR,
+                title="提示",
+                content="打开文件夹失败",
+                isClosable=True,
+                tailPosition=TeachingTipTailPosition.BOTTOM,
+                duration=2000,
+                parent=self,
+            )
 
     def initParmas(self):
         self.socre_records = {}
-        self.path = "C:/Users/EchoBai/Desktop/操作系统实验报告/00"
+        # self.path = "C:/Users/EchoBai/Desktop/操作系统实验报告/00"
         self.filename = os.path.join(self.path, "records.json")
         self.pdflist = Handle().findlist(self.path)
         self.page = 0
@@ -73,7 +93,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.cur_fpath = self.path + "/"
         self.cur_fpath += self.cur_fname
         self.index = 0
-        print(self.pdflist)
 
     def initSlots(self):
         self.fileList.doubleClicked.connect(self.open_file)  # 双击文件打开
@@ -82,6 +101,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.preDocBtn.clicked.connect(self.pre_doc)
         self.nextDocBtn.clicked.connect(self.next_doc)
         self.selModeBox.currentIndexChanged.connect(self.selectionChanged)
+        self.openFileAction.triggered.connect(self.get_sel_fpath)
 
     def get_pdf_files(self):
         pdf_files = []
@@ -114,7 +134,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.update_params(next_fname)
         # self.read_book(self.cur_fpath)
         self.set_stuinfo(next_fname)
-        self.set_page()
+        self.set_page() 
 
     def pre_doc(self):
         pre_fname = self.get_pre_file()

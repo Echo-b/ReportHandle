@@ -5,6 +5,8 @@ import re
 # reference : https://ocsxxi.top/posts/2024-01-13-1/
 from natsort import os_sorted
 
+from qfluentwidgets import TeachingTip, TeachingTipTailPosition, InfoBarIcon
+
 class Handle:
     def __init__(self) -> None:
         pass
@@ -31,4 +33,15 @@ class Handle:
             fileinfo["stuid"] = expected_match.group("student_id")
             fileinfo["labinfo"] = expected_match.group("experiment_num")
             print(expected_match.group("name"))
+        else:
+            TeachingTip.create(
+                target=self,
+                icon=InfoBarIcon.INFORMATION,
+                title="提示",
+                content="文件信息解析失败, 请检查文件名格式是否正确",
+                isClosable=True,
+                tailPosition=TeachingTipTailPosition.BOTTOM,
+                duration=2000,
+                parent=self,
+            )
         return fileinfo
