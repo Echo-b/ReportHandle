@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import (
 )
 from qfluentwidgets import MessageBox, TeachingTip, TeachingTipTailPosition, InfoBarIcon
 
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap, QIcon
 from Ui_MainWindow import Ui_MainWindow
 from filehandle import Handle
 from Area import MyArea
@@ -31,6 +31,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         # 界面初始大小
         # self.resize(self.screen.width(), self.screen.height())
+        self.setWindowIcon(QIcon('./image/avatar.jpg'))
+        self.setWindowTitle("简易报告批改器")
         self.initSlots()
 
     def initUi(self):
