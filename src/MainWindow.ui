@@ -216,12 +216,18 @@
      <string>文件</string>
     </property>
     <addaction name="openFileAction"/>
+    <addaction name="writeExcelAction"/>
    </widget>
    <addaction name="menu"/>
   </widget>
   <action name="openFileAction">
    <property name="text">
     <string>打开文件</string>
+   </property>
+  </action>
+  <action name="writeExcelAction">
+   <property name="text">
+    <string>写入excel</string>
    </property>
   </action>
  </widget>

@@ -19,6 +19,7 @@ from filehandle import Handle
 from Area import MyArea
 from utils import Size, Point
 from comments import CommentTemplate
+from datahandle import DataHandle
 
 try:
     import fitz
@@ -92,6 +93,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # self.path = "C:/Users/EchoBai/Desktop/操作系统实验报告/00"
         self.filename = os.path.join(self.path, "records.json")
         self.pdflist = Handle().findlist(self.path)
+        self.init_score_records()
         self.page = 0
         self.total_page = 0
         self.cur_fname = self.pdflist[self.page]
@@ -99,6 +101,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.cur_fpath += self.cur_fname
         self.index = 0
 
+    def init_score_records(self):
+        for fname in self.pdflist:
+            fileinfo = Handle().splittitle(fname)
+            sname = fileinfo["name"]
+            stuid = fileinfo["stuid"]
+            score = "0"
+            comments = ""
+            labinfo = "实验" + str(fileinfo["labinfo"])
+            self.socre_records[stuid] = tuple((sname, score, labinfo, comments))
+            
     def initSlots(self):
         self.fileList.doubleClicked.connect(self.open_file)  # 双击文件打开
         self.okBtn.clicked.connect(self.save_score)
@@ -107,6 +119,36 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.nextDocBtn.clicked.connect(self.next_doc)
         self.selCommentsTemplate.clicked.connect(self.select_comments_template)
         self.openFileAction.triggered.connect(self.get_sel_fpath)
+        self.writeExcelAction.triggered.connect(self.write_data_to_excel)
+
+    def write_data_to_excel(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fpath, _ = QFileDialog.getOpenFileName(self, "请选择需要导入的excel名单表", "",
+                                                  "Excel Files (*.xlsx *.xls)", options=options)
+        if fpath:
+            DataHandle().write_to_excel(fpath, self.socre_records)
+            TeachingTip.create(
+                target=self,
+                icon=InfoBarIcon.SUCCESS,
+                title="提示",
+                content="写入成绩成功",
+                isClosable=True,
+                tailPosition=TeachingTipTailPosition.BOTTOM,
+                duration=2000,
+                parent=self,
+            )
+        else:
+            TeachingTip.create(
+                target=self,
+                icon=InfoBarIcon.INFORMATION,
+                title="提示",
+                content="请选择文件",
+                isClosable=True,
+                tailPosition=TeachingTipTailPosition.BOTTOM,
+                duration=2000,
+                parent=self,
+            )
 
     def select_comments_template(self):
         self.show_comments_windos()
@@ -140,9 +182,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def pre_doc(self):
         pre_fname = self.get_pre_file()
         self.update_params(pre_fname)
-        self.set_stuinfo(pre_fname)
+        
         # self.read_book(self.cur_fpath)
         self.set_page()
+        self.set_stuinfo(pre_fname)
 
     def open_file(self, Qmodelidx):
         print(self.fileList.model.filePath(Qmodelidx))  # 输出文件的地址。
@@ -160,10 +203,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def set_stuinfo(self, filename):
         fileinfo = Handle().splittitle(filename)
-        self.score.setText(str(0))
         self.stuName.setText(fileinfo["name"])
-        self.stuID.setText(fileinfo["stuid"])
-        self.labName.setText("实验" + fileinfo["labinfo"])
+        stuid = fileinfo["stuid"]
+        self.stuID.setText(stuid)
+        if self.socre_records[stuid] is not None:
+            self.score.setText(str(self.socre_records[stuid][1]))
+        else:
+            self.score.setText(str(0))
+        self.labName.setText("实验" + str(fileinfo["labinfo"]))
 
     def get_score(self) -> int:
         return self.score.text()
@@ -218,6 +265,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         score = self.get_score()
         comments = self.Comments.toPlainText()
         self.socre_records[stuid] = tuple((stuname, score, labinfo, comments))
+        # self.socre_records[stuid][1] = score
+        # self.socre_records[stuid][3] = comments
         TeachingTip.create(
                 target=self,
                 icon=InfoBarIcon.SUCCESS,

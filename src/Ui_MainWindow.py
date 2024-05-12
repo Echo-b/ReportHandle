@@ -74,7 +74,10 @@ class Ui_MainWindow(object):
         MainWindow.setMenuBar(self.menubar)
         self.openFileAction = QtWidgets.QAction(MainWindow)
         self.openFileAction.setObjectName("openFileAction")
+        self.writeExcelAction = QtWidgets.QAction(MainWindow)
+        self.writeExcelAction.setObjectName("writeExcelAction")
         self.menu.addAction(self.openFileAction)
+        self.menu.addAction(self.writeExcelAction)
         self.menubar.addAction(self.menu.menuAction())
 
         self.retranslateUi(MainWindow)
@@ -94,4 +97,5 @@ class Ui_MainWindow(object):
         self.selCommentsTemplate.setText(_translate("MainWindow", "选择评论模板"))
         self.menu.setTitle(_translate("MainWindow", "文件"))
         self.openFileAction.setText(_translate("MainWindow", "打开文件"))
+        self.writeExcelAction.setText(_translate("MainWindow", "写入excel"))
 from qfluentwidgets import LineEdit, PrimaryPushButton, StrongBodyLabel, TextEdit
