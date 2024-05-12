@@ -35,6 +35,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # self.resize(self.screen.width(), self.screen.height())
         self.setWindowIcon(QIcon('./image/avatar.jpg'))
         self.setWindowTitle("简易报告批改器")
+        # self.resize(1080,800)
         self.initSlots()
         self.ctw = CommentTemplate()
         self.get_select_options_signal.connect(self.ctw.confirm_select)
@@ -93,23 +94,48 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # self.path = "C:/Users/EchoBai/Desktop/操作系统实验报告/00"
         self.filename = os.path.join(self.path, "records.json")
         self.pdflist = Handle().findlist(self.path)
-        self.init_score_records()
-        self.page = 0
-        self.total_page = 0
-        self.cur_fname = self.pdflist[self.page]
-        self.cur_fpath = self.path + "/"
-        self.cur_fpath += self.cur_fname
-        self.index = 0
+        print(self.pdflist)
+        if self.pdflist:
+            self.init_score_records()
+            self.page = 0
+            self.total_page = 0
+            self.cur_fname = self.pdflist[self.page]
+            self.cur_fpath = self.path + "/"
+            self.cur_fpath += self.cur_fname
+            self.index = 0
+        else:
+            TeachingTip.create(
+                target=self,
+                icon=InfoBarIcon.INFORMATION,
+                title="提示",
+                content="所选文件夹没有找到pdf文件",
+                isClosable=True,
+                tailPosition=TeachingTipTailPosition.BOTTOM,
+                duration=2000,
+                parent=self,
+            )
 
     def init_score_records(self):
         for fname in self.pdflist:
             fileinfo = Handle().splittitle(fname)
-            sname = fileinfo["name"]
-            stuid = fileinfo["stuid"]
-            score = "0"
-            comments = ""
-            labinfo = "实验" + str(fileinfo["labinfo"])
-            self.socre_records[stuid] = tuple((sname, score, labinfo, comments))
+            if fileinfo:
+                sname = fileinfo["name"]
+                stuid = fileinfo["stuid"]
+                score = "0"
+                comments = ""
+                labinfo = "实验" + str(fileinfo["labinfo"])
+                self.socre_records[stuid] = tuple((sname, score, labinfo, comments))
+            else:
+                TeachingTip.create(
+                target=self,
+                icon=InfoBarIcon.ERROR,
+                title="提示",
+                content= str(fileinfo) + "文件命名格式不匹配",
+                isClosable=True,
+                tailPosition=TeachingTipTailPosition.BOTTOM,
+                duration=2000,
+                parent=self,
+            )
             
     def initSlots(self):
         self.fileList.doubleClicked.connect(self.open_file)  # 双击文件打开

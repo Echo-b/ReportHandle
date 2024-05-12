@@ -16,7 +16,6 @@ class Handle(object):
         for filename in pathlist:
             if os.path.splitext(filename)[1].lower() == ".pdf":
                 fl.append(filename)
-
         return fl
     
     def convert_chinese_number(self, num_str):

@@ -63,7 +63,7 @@ class Ui_MainWindow(object):
         self.Comments.setGeometry(QtCore.QRect(1090, 50, 201, 201))
         self.Comments.setObjectName("Comments")
         self.selCommentsTemplate = PrimaryPushButton(self.centralwidget)
-        self.selCommentsTemplate.setGeometry(QtCore.QRect(1140, 10, 111, 32))
+        self.selCommentsTemplate.setGeometry(QtCore.QRect(1130, 10, 111, 32))
         self.selCommentsTemplate.setObjectName("selCommentsTemplate")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)

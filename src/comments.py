@@ -59,7 +59,7 @@ class CommentTemplate(QDialog, Ui_Dialog):
 
     def init_params(self):
         self.options = []
-        self.path = "./template/comments.json"
+        self.path = './template/comments.json'
         self.DH = DataHandle()
         self.templates = self.DH.load_data(self.path)
     

@@ -191,7 +191,7 @@
    <widget class="PrimaryPushButton" name="selCommentsTemplate">
     <property name="geometry">
      <rect>
-      <x>1140</x>
+      <x>1130</x>
       <y>10</y>
       <width>111</width>
       <height>32</height>
