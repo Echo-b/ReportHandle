@@ -58,7 +58,7 @@ PyQt-Fluent-Widgets==1.5.4
 
 ```python
 expected_pattern = (
-    r"^(?P<name>.+)-(?P<student_id>\d+)-实验(?P<experiment_num>\d+|一)\.pdf$"
+    r"^(?P<name>.+)-(?P<student_id>\d+)-实验(?P<experiment_num>\d+|[一二三四五六七八九十]+)\.pdf$"
 )
 ```
 
