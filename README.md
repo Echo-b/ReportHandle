@@ -23,7 +23,7 @@
 - [x] `pdf`文件预览
 - [x] 报告人信息查看
 - [x] 分数评定
-- [x] 切换上下页
+- [x] 切换上下页(页面左右两侧点击鼠标左键)
 - [x] 切换不同`pdf`
 - [x] 双击打开`pdf`
 - [x] 直接将分数填入excel，不用中间保存。有好有坏
@@ -37,10 +37,14 @@
 ## 使用
 1. `Relese`页面下载打包好的文件解压运行其中的可执行程序(`ps`: 没有就是还没学会)
 2. 自己配置`python` 环境，具体需要的环境和版本如下：
-- 配置`PyQt5`环境
-- 配置[`PyQt-Fluent-Widgets`](https://github.com/zhiyiYo/PyQt-Fluent-Widgets)，下载项目文件，其中在`tools`目录下存在一个`designer.py`文件，可以用其进行界面设计。如下图所示：
+- 配置`PyQt5`环境[参考](https://zhuanlan.zhihu.com/p/640984344)
+- 配置`PyQt-Fluent-Widgets`[参考](https://github.com/zhiyiYo/PyQt-Fluent-Widgets)，下载项目文件，其中在`tools`目录下存在一个`designer.py`文件，可以用其进行界面设计。如下图所示：
   
 ![](./image/tools.png) 
+
+运行`python designer.py` 可得到`Qt`设计师界面，进行界面修改和搭建
+
+![](./image/qdesigner.png)
 
 - 下载对应缺少的包，没指定对应版本的即可使用最新版本，直接使用`pip`命令安装即可
 
@@ -48,6 +52,15 @@
 ```python
 PyMuPDF==1.19.0
 PyQt-Fluent-Widgets==1.5.4
+```
+
+一切安装完毕后运行下列命令
+
+```bash
+git clone git@github.com:Echo-b/ReportHandle.git
+cd ReportHandle/src
+python mainwindow.py
+
 ```
 
 ## 实现
