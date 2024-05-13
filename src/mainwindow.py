@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import (
     QDialog,
     QVBoxLayout,
     QLabel,
-    QFileDialog
+    QFileDialog,
 )
 from qfluentwidgets import MessageBox, TeachingTip, TeachingTipTailPosition, InfoBarIcon
 
@@ -26,14 +26,16 @@ try:
 except ImportError:
     print("请安装 fitz")
 
+
 class MainWindow(QMainWindow, Ui_MainWindow):
     get_select_options_signal = pyqtSignal(list)
+
     def __init__(self):
         super().__init__()
         self.setupUi(self)
         # 界面初始大小
         # self.resize(self.screen.width(), self.screen.height())
-        self.setWindowIcon(QIcon('./image/avatar.jpg'))
+        self.setWindowIcon(QIcon("./image/avatar.jpg"))
         self.setWindowTitle("简易报告批改器")
         # self.resize(1080,800)
         self.initSlots()
@@ -58,7 +60,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # 为控件添加模式。
         # 设置过滤器，仅显示 PDF 文件
         self.fileList.model.setNameFilters(["*.pdf"])
-        self.fileList.model.setNameFilterDisables(False)  # 禁用未匹配名称过滤器的文件的显示
+        self.fileList.model.setNameFilterDisables(
+            False
+        )  # 禁用未匹配名称过滤器的文件的显示
         self.fileList.setModel(self.fileList.model)
         self.fileList.setRootIndex(
             self.fileList.model.index(self.path)
@@ -71,7 +75,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # 打开文件夹选择对话框
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        folder = QFileDialog.getExistingDirectory(self, "请选择文件夹路径", options=options)
+        folder = QFileDialog.getExistingDirectory(
+            self, "请选择文件夹路径", options=options
+        )
         if folder:
             self.path = folder
             self.initParmas()
@@ -127,16 +133,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.socre_records[stuid] = tuple((sname, score, labinfo, comments))
             else:
                 TeachingTip.create(
-                target=self,
-                icon=InfoBarIcon.ERROR,
-                title="提示",
-                content= str(fileinfo) + "文件命名格式不匹配",
-                isClosable=True,
-                tailPosition=TeachingTipTailPosition.BOTTOM,
-                duration=2000,
-                parent=self,
-            )
-            
+                    target=self,
+                    icon=InfoBarIcon.ERROR,
+                    title="提示",
+                    content=str(fileinfo) + "文件命名格式不匹配",
+                    isClosable=True,
+                    tailPosition=TeachingTipTailPosition.BOTTOM,
+                    duration=2000,
+                    parent=self,
+                )
+
     def initSlots(self):
         self.fileList.doubleClicked.connect(self.open_file)  # 双击文件打开
         self.okBtn.clicked.connect(self.save_score)
@@ -150,8 +156,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def write_data_to_excel(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fpath, _ = QFileDialog.getOpenFileName(self, "请选择需要导入的excel名单表", "",
-                                                  "Excel Files (*.xlsx *.xls)", options=options)
+        fpath, _ = QFileDialog.getOpenFileName(
+            self,
+            "请选择需要导入的excel名单表",
+            "",
+            "Excel Files (*.xlsx *.xls)",
+            options=options,
+        )
         if fpath:
             DataHandle().write_to_excel(fpath, self.socre_records)
             TeachingTip.create(
@@ -203,12 +214,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.update_params(next_fname)
         # self.read_book(self.cur_fpath)
         self.set_stuinfo(next_fname)
-        self.set_page() 
+        self.set_page()
 
     def pre_doc(self):
         pre_fname = self.get_pre_file()
         self.update_params(pre_fname)
-        
+
         # self.read_book(self.cur_fpath)
         self.set_page()
         self.set_stuinfo(pre_fname)
@@ -263,7 +274,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 parent=self,
             )
             self.index = len(self.pdflist) - 1
-        elif self.index < len(self.pdflist) - 1: 
+        elif self.index < len(self.pdflist) - 1:
             self.index += 1
         return self.pdflist[self.index]
 
@@ -280,7 +291,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 parent=self,
             )
             self.index = 0
-        elif self.index > 0: 
+        elif self.index > 0:
             self.index -= 1
         return self.pdflist[self.index]
 
@@ -294,15 +305,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # self.socre_records[stuid][1] = score
         # self.socre_records[stuid][3] = comments
         TeachingTip.create(
-                target=self,
-                icon=InfoBarIcon.SUCCESS,
-                title="提示",
-                content="评分成功",
-                isClosable=True,
-                tailPosition=TeachingTipTailPosition.BOTTOM,
-                duration=2000,
-                parent=self,
-            )
+            target=self,
+            icon=InfoBarIcon.SUCCESS,
+            title="提示",
+            content="评分成功",
+            isClosable=True,
+            tailPosition=TeachingTipTailPosition.BOTTOM,
+            duration=2000,
+            parent=self,
+        )
         print(self.socre_records)
         self.next_doc()
 
@@ -310,15 +321,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         with open(self.filename, "w", encoding="utf-8") as f:
             json.dump(self.socre_records, f, ensure_ascii=False, indent=4)
         TeachingTip.create(
-                target=self,
-                icon=InfoBarIcon.SUCCESS,
-                title="提示",
-                content="导出文件成功",
-                isClosable=True,
-                tailPosition=TeachingTipTailPosition.BOTTOM,
-                duration=2000,
-                parent=self,
-            )
+            target=self,
+            icon=InfoBarIcon.SUCCESS,
+            title="提示",
+            content="导出文件成功",
+            isClosable=True,
+            tailPosition=TeachingTipTailPosition.BOTTOM,
+            duration=2000,
+            parent=self,
+        )
 
     def read_book(self, fname):
         # self.close()
@@ -361,7 +372,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         label.setScaledContents(True)
         p = render_pdf_page(page, x=self.size.x, y=self.size.y)
         pixmap = QPixmap(p)
-         # 按控件大小缩放标签
+        # 按控件大小缩放标签
         scaled_pixmap = pixmap.scaled(
             self.contentWidget.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation
         )

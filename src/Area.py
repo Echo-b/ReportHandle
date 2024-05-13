@@ -2,12 +2,11 @@ from PyQt5.QtWidgets import QScrollArea, QShortcut, QLabel, QVBoxLayout
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QMenu
-from PyQt5.QtCore import QObject , pyqtSignal
-
+from PyQt5.QtCore import QObject, pyqtSignal
 
 
 class MyArea(QScrollArea):
-    book = 0;
+    book = 0
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -40,7 +39,7 @@ class MyArea(QScrollArea):
         switch_right.activated.connect(self.right)
 
     def sebook(s1):
-        book = s1;
+        book = s1
 
     # 鼠标左键翻页
     def mousePressEvent(self, event):
